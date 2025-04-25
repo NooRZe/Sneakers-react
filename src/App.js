@@ -1,6 +1,7 @@
 import Card from "./components/Card";
 import Header from "./components/Header";
 import Drawer from "./components/Drawer";
+import React from "react";
 
 const arr = [
   {
@@ -44,10 +45,10 @@ function App() {
           {arr.map((obj) => (
             <Card 
               title= {obj.title}
-              price= {obj.price} 
+              price= {obj.price}
               imageUrl={obj.imageUrl}
-              onClick ={() => console.log(obj)
-              }
+              onFavorite ={() => console.log("В закладки")}
+              onPlus ={() => console.log("Плюс")}
             />
           ))}
         </div>

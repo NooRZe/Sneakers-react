@@ -9,7 +9,8 @@ function App() {
   const [items, setItems] = React.useState([]);
   const [cartOpened, setCartOpened] = React.useState(false);
 
-  //Запрос на бэк для получения массива данных с mockapi
+  /*Запрос на бэк для получения массива данных с mockapi 
+  useEffect нужен чтобы запрос отправился 1 раз при загрузке страницы, а не при каждом рендере App*/
   React.useEffect(() => {
     fetch('https://680b7472d5075a76d98b2cd7.mockapi.io/items').then(res => {
       return res.json();
@@ -43,6 +44,7 @@ function App() {
             />
           ))}
         </div>
+
       </div>
     </div>
   );

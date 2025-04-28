@@ -7,6 +7,7 @@ import React from "react";
 
 function App() {
   const [items, setItems] = React.useState([]);
+  const [cartItems, setCartItems] = React.useState([]);
   const [cartOpened, setCartOpened] = React.useState(false);
 
   /*Запрос на бэк для получения массива данных с mockapi 
@@ -19,9 +20,17 @@ function App() {
     });
   }, [])
 
+  const onAddToCart = (obj) => {
+    cartItems.map((item) => (
+      item.imageUrl !== obj.imageUrl && setCartItems(prev => [...prev, obj])
+    ));
+    //в реакте использовать push метод массива опасно, надо юзать спред оператор [...], prev берет последние данные, использовать [...cartItems] опасно
+   
+  };
+
   return (
     <div className="wrapper clear">
-      {cartOpened && <Drawer onClose={() => setCartOpened(false)}/>}
+      {cartOpened && <Drawer items= {cartItems} onClose={() => setCartOpened(false)}/>}
       <Header onClickCart={() => setCartOpened(true)}/>
       <div className="content p-40">
 
@@ -34,13 +43,13 @@ function App() {
         </div>
 
         <div className="d-flex flex-wrap">
-          {items.map((obj) => (
+          {items.map((item) => (
             <Card 
-              title= {obj.title}
-              price= {obj.price}
-              imageUrl={obj.imageUrl}
+              title= {item.title}
+              price= {item.price}
+              imageUrl={item.imageUrl}
               onFavorite ={() => console.log("В закладки")}
-              onPlus ={() => console.log("Плюс")}
+              onPlus ={(obj) => onAddToCart(obj)}
             />
           ))}
         </div>

@@ -30,13 +30,20 @@ function App() {
   const onAddToCart = (obj) => {
     axios.post('https://680b7472d5075a76d98b2cd7.mockapi.io/cart', obj);     
     
-    setCartItems(prev => [...prev, obj])
+    setCartItems((prev) => [...prev, obj])
 
     /*cartItems.map((item) => (
       item.imageUrl !== obj.imageUrl && setCartItems(prev => [...prev, obj])
     ));*/
     //в реакте использовать push метод массива опасно, надо юзать спред оператор [...], prev берет последние данные, использовать [...cartItems] опасно
   };
+
+  const onRemoveItem =(id) => {
+   axios.delete(`https://680b7472d5075a76d98b2cd7.mockapi.io/cart/${id}`);
+    
+   setCartItems((prev) => prev.filter(item => item.id !== id));
+  }
+
   //реализация поиска
   const onChangeSearchInput = (event) => {
     setSearchValue(event.target.value);
@@ -44,7 +51,7 @@ function App() {
 
   return (
     <div className="wrapper clear">
-      {cartOpened && <Drawer items= {cartItems} onClose={() => setCartOpened(false)}/>}
+      {cartOpened && <Drawer items= {cartItems} onClose={() => setCartOpened(false)} onRemove={onRemoveItem}/>}
       <Header onClickCart={() => setCartOpened(true)}/>
       <div className="content p-40">
 

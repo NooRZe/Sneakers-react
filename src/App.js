@@ -10,6 +10,7 @@ function App() {
   const [cartItems, setCartItems] = React.useState([]);
   const [cartOpened, setCartOpened] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
+  const [favorites, setFavorites] = React.useState([]);
   /*Запрос на бэк для получения массива данных с mockapi 
   useEffect нужен чтобы запрос отправился 1 раз при загрузке страницы, а не при каждом рендере App*/
   React.useEffect(() => {
@@ -29,7 +30,6 @@ function App() {
 
   const onAddToCart = (obj) => {
     axios.post('https://680b7472d5075a76d98b2cd7.mockapi.io/cart', obj);     
-    
     setCartItems((prev) => [...prev, obj])
 
     /*cartItems.map((item) => (
@@ -38,10 +38,14 @@ function App() {
     //в реакте использовать push метод массива опасно, надо юзать спред оператор [...], prev берет последние данные, использовать [...cartItems] опасно
   };
 
+  const onAddToFavorites = (obj) => {
+    axios.post('https://68136c1e129f6313e2113452.mockapi.io/favorites', obj);     
+    setFavorites((prev) => [...prev, obj])
+  };
+
   const onRemoveItem =(id) => {
    axios.delete(`https://680b7472d5075a76d98b2cd7.mockapi.io/cart/${id}`);
-    
-   setCartItems((prev) => prev.filter(item => item.id !== id));
+   setCartItems((prev) => prev.filter((item) => item.id !== id));
   }
 
   //реализация поиска
@@ -71,8 +75,8 @@ function App() {
               title= {item.title}
               price= {item.price}
               imageUrl={item.imageUrl}
-              onFavorite ={() => console.log("В закладки")}
               onPlus ={(obj) => onAddToCart(obj)}
+              onFavorite = {(obj) => onAddToFavorites(obj)}
             />
           ))}
         </div>

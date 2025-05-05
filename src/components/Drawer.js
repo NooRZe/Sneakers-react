@@ -15,7 +15,7 @@ function Drawer({onClose, onRemove, items = []}) {
                   <p className="mb-5">{obj.title}</p>
                   <b>{obj.price} руб.</b>
                 </div>
-                //тут в onRemove было obj.id так и не понял в чем загвоздка в удалении 
+
                 <img onClick={() => onRemove(obj)} className="removeBtn"  src="img/btn-remove.svg" alt="Remove"/>
                 </div>  
               ))}

@@ -1,4 +1,5 @@
 import Home from "./pages/Home";
+import Favorites from "./pages/Favorites";
 import Header from "./components/Header";
 import Drawer from "./components/Drawer";
 import React from "react";
@@ -25,8 +26,13 @@ function App() {
     axios.get('https://680b7472d5075a76d98b2cd7.mockapi.io/items').then(res => {
       setItems(res.data);     
     });
+
     axios.get('https://680b7472d5075a76d98b2cd7.mockapi.io/cart').then(res => {
       setCartItems(res.data);     
+    });
+
+    axios.get('https://68136c1e129f6313e2113452.mockapi.io/favorites').then(res => {
+      setFavorites(res.data);     
     });
   }, [])
 
@@ -41,13 +47,19 @@ function App() {
   };
 
   const onAddToFavorites = (obj) => {
-    axios.post('https://68136c1e129f6313e2113452.mockapi.io/favorites', obj);     
-    setFavorites((prev) => [...prev, obj])
+    if (favorites.find((obj) => obj.id === obj.id)) {
+      axios.delete(`https://68136c1e129f6313e2113452.mockapi.io/favorites/${obj.id}`);  
+      setFavorites((prev) => prev.filter((item) => item.id !== obj.id))
+    } else {
+      axios.post('https://68136c1e129f6313e2113452.mockapi.io/favorites', obj);     
+      setFavorites((prev) => [...prev, obj])
+    }
+
   };
 
-  const onRemoveItem =(id) => {
-   axios.delete(`https://680b7472d5075a76d98b2cd7.mockapi.io/cart/${id}`);
-   setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const onRemoveItem =(obj) => {
+    axios.delete(`https://680b7472d5075a76d98b2cd7.mockapi.io/cart/${obj.id}`);
+    setCartItems((prev) => prev.filter((item) => item.id !== obj.id));
   }
 
   //реализация поиска
@@ -63,12 +75,22 @@ function App() {
       <Routes>
         <Route path="/" element = {
           <Home
-           items = {items}
-           searchValue = {searchValue}
-           setSearchValue = {setSearchValue}
-           onChangeSearchInput = {onChangeSearchInput}
+            items = {items}
+            searchValue = {searchValue}
+            setSearchValue = {setSearchValue}
+            onChangeSearchInput = {onChangeSearchInput}
+            onAddToFavorites = {onAddToFavorites}
+            onAddToCart = {onAddToCart}
+          />
+        } exact>
+        </Route>
+      </Routes>
+
+      <Routes>
+        <Route path="/favorites" element = {
+          <Favorites
+           items = {favorites}
            onAddToFavorites = {onAddToFavorites}
-           onAddToCart = {onAddToCart}
           />
         } exact>
         </Route>

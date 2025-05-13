@@ -5,8 +5,7 @@ import Drawer from "./components/Drawer";
 import React from "react";
 import axios from "axios";
 import { Route,  Routes } from 'react-router-dom';
-
-
+import AppContext from "./contex";
 
 function App() {
   const [items, setItems] = React.useState([]);
@@ -14,6 +13,7 @@ function App() {
   const [cartOpened, setCartOpened] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
   const [favorites, setFavorites] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   /*Запрос на бэк для получения массива данных с mockapi 
   useEffect нужен чтобы запрос отправился 1 раз при загрузке страницы, а не при каждом рендере App*/
   React.useEffect(() => {
@@ -27,7 +27,9 @@ function App() {
       const cartResponse = await axios.get('https://680b7472d5075a76d98b2cd7.mockapi.io/cart');
       const favoritesResponse = await axios.get('https://68136c1e129f6313e2113452.mockapi.io/favorites');
       const itemsResponse = await axios.get('https://680b7472d5075a76d98b2cd7.mockapi.io/items');
-      
+
+      setIsLoading(false);
+
       setCartItems(cartResponse.data);    
       setFavorites(favoritesResponse.data);     
       setItems(itemsResponse.data);   
@@ -83,42 +85,42 @@ function App() {
   } 
 
   return (
-    <div className="wrapper clear">
-      {cartOpened && <Drawer 
-        items= {cartItems} 
-        onClose={() => setCartOpened(false)} 
-        onRemove={onRemoveItem}
-      />}
-      <Header onClickCart={() => setCartOpened(true)}/>
+    <AppContext.Provider value={{cartItems, favorites, items}}>
+      <div className="wrapper clear">
+        {cartOpened && <Drawer 
+          items= {cartItems} 
+          onClose={() => setCartOpened(false)} 
+          onRemove={onRemoveItem}
+        />}
+        <Header onClickCart={() => setCartOpened(true)}/>
 
-      <Routes>
-        <Route path="/" element = {
-          <Home
-            cartItems = {cartItems}
-            items = {items}
-            searchValue = {searchValue}
-            setSearchValue = {setSearchValue}
-            onChangeSearchInput = {onChangeSearchInput}
+        <Routes>
+          <Route path="/" element = {
+            <Home
+              cartItems = {cartItems}
+              items = {items}
+              searchValue = {searchValue}
+              setSearchValue = {setSearchValue}
+              onChangeSearchInput = {onChangeSearchInput}
+              onAddToFavorites = {onAddToFavorites}
+              onAddToCart = {onAddToCart}
+              isLoading = {isLoading}
+              favorites = {favorites}
+            />
+          } exact>
+          </Route>
+        </Routes>
+
+        <Routes>
+          <Route path="/favorites" element = {
+            <Favorites
             onAddToFavorites = {onAddToFavorites}
-            onAddToCart = {onAddToCart}
-          />
-        } exact>
-        </Route>
-      </Routes>
-
-      <Routes>
-        <Route path="/favorites" element = {
-          <Favorites
-           items = {favorites}
-           onAddToFavorites = {onAddToFavorites}
-          />
-        } exact>
-        </Route>
-      </Routes>
-      
-
-
-    </div>
+            />
+          } exact>
+          </Route>
+        </Routes>
+      </div>
+    </AppContext.Provider>
   );
 }
 
